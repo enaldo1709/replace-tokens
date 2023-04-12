@@ -13,6 +13,7 @@ const (
 	TEMPORARY_DIR      = "./temp"
 	TOKEN_REGEX        = `$token_prefix([a-zA-Z0-9\-_\$]*)$token_suffix`
 	ENV_VARIABLE_REGEX = `^\$([a-zA-Z0-9\-_]+)$`
+	FILE_ERROR_ACCESS  = `file '%s' not found or without access -> `
 )
 
 func main() {
@@ -60,11 +61,11 @@ func replaceTokens(prefix, suffix, tokensPath, toReplacePath string,
 
 	fileLines, err := getLines(toReplacePath)
 	if err != nil {
-		log.Fatal(fmt.Sprintf("file '%s' not found or without access -> ", toReplacePath), err)
+		log.Fatal(fmt.Sprintf(FILE_ERROR_ACCESS, toReplacePath), err)
 	}
 	tokenLines, err := getLines(tokensPath)
 	if err != nil {
-		log.Fatal(fmt.Sprintf("file '%s' not found or without access -> ", tokensPath), err)
+		log.Fatal(fmt.Sprintf(FILE_ERROR_ACCESS, tokensPath), err)
 	}
 
 	replaced := []string{}
@@ -93,7 +94,7 @@ func replaceTokens(prefix, suffix, tokensPath, toReplacePath string,
 	log.Println(fileLines)
 	err = writeLines(toReplacePath, useFlag, fileLines)
 	if err != nil {
-		log.Fatal(fmt.Sprintf("file '%s' not found or without access -> ", toReplacePath), err)
+		log.Fatal(fmt.Sprintf(FILE_ERROR_ACCESS, toReplacePath), err)
 	}
 }
 
