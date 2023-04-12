@@ -16,6 +16,8 @@ const (
 	FILE_ERROR_ACCESS  = `file '%s' not found or without access -> `
 )
 
+var separator = string(os.PathSeparator)
+
 func main() {
 	filename := ""
 	if len(os.Args) < 5 {
@@ -139,9 +141,9 @@ func writeLines(path, output string, useFlag bool, fileLines []string) (string, 
 	}
 
 	if len(output) > 0 {
-		paths := strings.Split(filepath, "/")
+		paths := strings.Split(filepath, separator)
 		if len(paths) > 1 {
-			filepath = strings.Join(append(paths[:len(paths)-2], output), "/")
+			filepath = strings.Join(append(paths[:len(paths)-2], output), separator)
 		} else {
 			filepath = output
 		}
