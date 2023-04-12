@@ -3,6 +3,9 @@ run:
 
 build:
 	go build -o replacetokens src/main.go 
+	
+build-windows:
+	go build -o replacetokens.exe src/main.go 
 
 install:
 	go build -o replacetokens src/main.go 
