@@ -26,6 +26,14 @@ func main() {
 	tokensFilePath := string(os.Args[3])
 	toReplaceFilePath := string(os.Args[4])
 
+	_, tokensExtension := getFileName(tokensFilePath)
+	if tokensExtension != "yaml" && tokensExtension != "yml" {
+		log.Fatalf(
+			"Invalid file tokens, must be a yaml file (.yaml - .yml) and must be on yaml format -> file extension: %s",
+			tokensExtension,
+		)
+	}
+
 	tokenPrefixEscaped := escapeRegexChars(tokenPrefix)
 	tokenSuffixEscaped := escapeRegexChars(tokenSuffix)
 
