@@ -8,3 +8,8 @@ install:
 	go build -o replacetokens src/main.go 
 	chmod a+x replacetokens
 	mv -f replacetokens ${GOBIN}
+
+install-to-system:
+	go build -o replacetokens src/main.go 
+	chmod a+x replacetokens
+	sudo mv -f replacetokens /bin
