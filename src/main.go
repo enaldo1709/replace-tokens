@@ -17,6 +17,7 @@ const (
 )
 
 func main() {
+	filename := ""
 	log.Println("Replacing tokens on file...")
 	if len(os.Args) < 5 {
 		log.Fatalln("Insufficient arguments")
@@ -26,6 +27,9 @@ func main() {
 	tokenSuffix := string(os.Args[2])
 	tokensFilePath := string(os.Args[3])
 	toReplaceFilePath := string(os.Args[4])
+	if len(os.Args) > 5 {
+		filename = os.Args[5]
+	}
 
 	_, tokensExtension := getFileName(tokensFilePath)
 	if tokensExtension != "yaml" && tokensExtension != "yml" {
@@ -47,16 +51,16 @@ func main() {
 	}
 	envRegex := regexp.MustCompile(ENV_VARIABLE_REGEX)
 
-	replaceTokens(tokenPrefix, tokenSuffix, tokensFilePath, tokensFilePath, tokenRegex, envRegex, true)
+	replaceTokens(tokenPrefix, tokenSuffix, tokensFilePath, tokensFilePath, filename, tokenRegex, envRegex, true)
 	replacedTokens, extension := getFileName(tokensFilePath)
 	if len(extension) > 0 {
 		extension = "." + extension
 	}
 	replacedTokens = replacedTokens + "-replaced" + extension
-	replaceTokens(tokenPrefix, tokenSuffix, replacedTokens, toReplaceFilePath, tokenRegex, envRegex, true)
+	replaceTokens(tokenPrefix, tokenSuffix, replacedTokens, toReplaceFilePath, filename, tokenRegex, envRegex, true)
 }
 
-func replaceTokens(prefix, suffix, tokensPath, toReplacePath string,
+func replaceTokens(prefix, suffix, tokensPath, toReplacePath, output string,
 	haveTokensRegex, envRegex *regexp.Regexp, useFlag bool) {
 
 	fileLines, err := getLines(toReplacePath)
@@ -92,7 +96,7 @@ func replaceTokens(prefix, suffix, tokensPath, toReplacePath string,
 		replaced = []string{}
 	}
 	log.Println(fileLines)
-	err = writeLines(toReplacePath, useFlag, fileLines)
+	err = writeLines(toReplacePath, output, useFlag, fileLines)
 	if err != nil {
 		log.Fatal(fmt.Sprintf(FILE_ERROR_ACCESS, toReplacePath), err)
 	}
@@ -120,7 +124,7 @@ func getValueFromTokensFile(name, value string, replaced, tokenLines []string) (
 	return replacedLines, replaced
 }
 
-func writeLines(path string, useFlag bool, fileLines []string) error {
+func writeLines(path, output string, useFlag bool, fileLines []string) error {
 	flag := "-replaced"
 	if !useFlag {
 		flag = ""
@@ -130,6 +134,15 @@ func writeLines(path string, useFlag bool, fileLines []string) error {
 	filepath = filepath + flag
 	if len(extension) > 0 {
 		filepath = filepath + "." + extension
+	}
+
+	if len(output) > 0 {
+		paths := strings.Split(filepath, "/")
+		if len(paths) > 1 {
+			filepath = strings.Join(append(paths[:len(paths)-2], output), "/")
+		} else {
+			filepath = output
+		}
 	}
 
 	if _, err := os.Stat(filepath); err == nil {
