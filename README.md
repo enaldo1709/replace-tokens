@@ -167,7 +167,11 @@ database.password=prod-password
 
 ## **Author**
 
-[Enaldo Narvaez Yepes](https://github.com/enaldo1709): Software Developer.
+**Enaldo Narvaez Yepes**:\
+Software Developer.
+
+* [Github](https://github.com/enaldo1709)
+* [LinkedIn](https://www.linkedin.com/in/enaldo-narv%C3%A1ez-3386b6148/)
 
 ## **Thanks**
 
