@@ -1,6 +1,6 @@
 # **Replace Tokens**
 
-## Overview
+## **Overview**
 
 Replace tokens is a command line tool that helps to replace variable tokens in configuration files.\
 The main goal of this tool is to help the deployment process by defining configuration variables in each deployment stage or environment.
@@ -15,7 +15,7 @@ Binary files can be found in the release section. Users can download the binarie
 
 * [Linux x86-amd64](https://github.com/enaldo1709/replace-tokens/releases/download/replacetokens/replacetokens-linux)
 * [Windows x86-amd64](https://github.com/enaldo1709/replace-tokens/releases/download/replacetokens/replacetokens-windows.exe)
-* [Apple Mac OS Intel Chips x86-amd64]()
+* [Apple Mac OS Intel Chips x86-amd64](https://github.com/enaldo1709/replace-tokens/releases/download/replacetokens/replacetokens-macos)
 
 ### Build from source
 
@@ -164,3 +164,11 @@ log.level=info
 database.user=prod-user
 database.password=prod-password
 ```
+
+## **Author**
+
+[Enaldo Narvaez Yepes](https://github.com/enaldo1709): Software Developer.
+
+## **Thanks**
+
+Thanks to all open source and Go community for the effort of building all go platforms and tools.
