@@ -21,7 +21,15 @@ var separator = string(os.PathSeparator)
 func main() {
 	filename := ""
 	if len(os.Args) < 5 {
-		log.Fatalln("Insufficient arguments")
+		if len(os.Args) > 1 && (os.Args[1] == "-h" || os.Args[1] == "--help") {
+			printHelp()
+			return
+		} else if len(os.Args) > 1 && (os.Args[1] == "-v" || os.Args[1] == "--version") {
+			printVersion()
+			return
+		} else {
+			log.Fatalln("Insufficient arguments")
+		}
 	}
 
 	tokenPrefix := string(os.Args[1])
@@ -211,4 +219,26 @@ func getFileName(path string) (string, string) {
 	}
 
 	return spplited[0], spplited[1]
+}
+
+func printHelp() {
+	helpPrompt := `Usage:
+	replacetokens [PREFIX] [SUFFIX] [TOKENS FILE] [TO REPLACE] [[OUTPUT]]
+
+PREFIX		required	Prefix used to denote a token in the file to replace.
+SUFFIX		required	Suffix used to denote a token in the file to replace.
+TOKENS FILE	required	Path to the file that contains the values of the tokens to be replaced. 
+					Must be key-value in YAML format with just one hierarchical level. Eg. **TOKEN: value**.
+TO REPLACE	required	Path to the file that contains the tokens which might be replaced by the values in the TOKENS FILE 
+OUTPUT		optional	Path to the file where will be wrote the TO REPLACE file with all tokens replaced. 
+					If OUTPUT is not provided, the output file will be paced in the same location oh the TO REPLACE 
+					file with the same name adding a flag at the end of the filename with value of "-replaced"`
+	fmt.Println(helpPrompt)
+}
+
+func printVersion() {
+	versionPrompt := `replacetokens v1.0.1
+Build by github.com/enaldo1709`
+
+	fmt.Println(versionPrompt)
 }
