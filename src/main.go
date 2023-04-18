@@ -87,6 +87,9 @@ func replaceTokens(prefix, suffix, tokensPath, toReplacePath, output string,
 	replaced := []string{}
 	var replacedLines int = 1
 
+	escapedTokenPreffix := escapeRegexChars(prefix)
+	prefixRegex := regexp.MustCompile(escapedTokenPreffix)
+
 	for replacedLines != 0 {
 		replacedLines = 0
 		for _, l := range fileLines {
@@ -95,12 +98,25 @@ func replaceTokens(prefix, suffix, tokensPath, toReplacePath, output string,
 				continue
 			}
 			value := strings.Split(strings.Split(l, prefix)[1], suffix)[0]
+
+			splittedSuff := strings.Split(l, suffix)[1:]
+			nextSplit := []string{}
+			for _, w := range splittedSuff {
+				if s1 := prefixRegex.FindStringSubmatch(w); s1 != nil {
+					nextSplit = append(nextSplit, fmt.Sprintf("%s%s", w, suffix))
+					continue
+				}
+				nextSplit = append(nextSplit, w)
+			}
+
+			next := strings.Join(nextSplit, "")
+
 			name := strings.Split(l, prefix)[0]
 			if envRegex.MatchString(value) {
-				replaced = getValueFromEnv(name, value, replaced)
+				replaced = getValueFromEnv(name, value, next, replaced)
 				replacedLines++
 			} else {
-				replacedLines, replaced = getValueFromTokensFile(name, value, replaced, tokenLines)
+				replacedLines, replaced = getValueFromTokensFile(name, value, next, replaced, tokenLines)
 			}
 		}
 		fileLines = replaced
@@ -114,15 +130,15 @@ func replaceTokens(prefix, suffix, tokensPath, toReplacePath, output string,
 	log.Printf("wrote %d lines in output file -> %s", len(fileLines), out)
 }
 
-func getValueFromEnv(name, value string, replaced []string) []string {
+func getValueFromEnv(name, value, next string, replaced []string) []string {
 	value = strings.ReplaceAll(value, "$", "")
 	varValue := os.Getenv(value)
 	log.Printf("replacing :::: %s%s -> %s", name, value, varValue)
-	replaced = append(replaced, fmt.Sprintf("%s%s", name, varValue))
+	replaced = append(replaced, fmt.Sprintf("%s%s%s", name, varValue, next))
 	return replaced
 }
 
-func getValueFromTokensFile(name, value string, replaced, tokenLines []string) (int, []string) {
+func getValueFromTokensFile(name, value, next string, replaced, tokenLines []string) (int, []string) {
 	replacedLines := 0
 	for _, t := range tokenLines {
 		if value != strings.Split(t, ":")[0] {
@@ -130,7 +146,7 @@ func getValueFromTokensFile(name, value string, replaced, tokenLines []string) (
 		}
 		varValue := strings.TrimSpace(strings.Split(t, ":")[1])
 		log.Printf("replacing :::: %s%s -> %s", name, value, varValue)
-		replaced = append(replaced, fmt.Sprintf("%s%s", name, varValue))
+		replaced = append(replaced, fmt.Sprintf("%s%s%s", name, varValue, next))
 		replacedLines++
 	}
 	return replacedLines, replaced
